@@ -2,6 +2,7 @@ require 'net/http'
 require 'digest/md5'
 require 'json'
 require 'base64'
+require "addressable/uri"
 
 require 'e_pochta_base'
 require 'e_pochta_sms'

@@ -21,6 +21,57 @@ module EPochtaService
 			end
 		end
 
+		# calling API's addAddressesNew method
+		def addAddressesNew(params)
+
+			if (params['id_list'].present? && params['emails'].kind_of?(Array) && params['emails'].count)
+
+				p = {
+						'action' => 'addAddressesNew',
+						'id_list' => params['id_list'].kind_of?(Array) ? params['id_list'] : [params['id_list'].to_i]
+				}
+
+				# emails
+				p['emails'] = {
+						'address' => params['emails'].kind_of?(Array) ? params['emails'].join('|') : params['emails'].to_s
+				}
+
+				#variables
+
+				if (params['variables'].kind_of?(Array) && params['variables'].count)
+					p['emails']['variables'] = params['variables'].each { |var| var.to_json }.join('|')
+				end
+
+
+				p['version'] = '3.0'
+				p['sum'] = calculate_md5 p
+				self.parameters = p.each { |k, v| v = URI.escape v.to_s }
+
+				# Because of standard URI module doesn't correctly interpret arrays and hashes,
+				# we are using Addressable gem
+				uri = Addressable::URI.new
+				uri.query_values= p # p.reject {|k,e| %w(action version).include?(k) }
+
+				url = URI("#{self.class::URL}#{p['action']}")
+				url.query = uri.query
+
+				result = Net::HTTP.post_form(url, self.parameters)
+				STDERR.puts result.body
+				result = JSON.parse(result.body)
+
+				if result.include? 'error'
+					false
+				else
+					result.include?('result') ? result['result'] : result
+				end
+			else
+				return false
+
+			end
+
+		end
+
+
 		def getCampaignDeliveryStats(params)
 			params['action'] = 'getCampaignDeliveryStats'	
 			result = exec_command(params)
