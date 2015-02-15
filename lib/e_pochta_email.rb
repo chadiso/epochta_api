@@ -3,20 +3,20 @@ module EPochtaService
 		URL = 'http://atompark.com/api/email/3.0/'
 
 		[
-			:addAddressbook, :delAddressbook, :addAddresses,
-			:getAddressbook, :activateEmails, :createCampaign,
-			:delEmail, :getUserBalance, :getCampaignStats			
+				:addAddressbook, :delAddressbook, :addAddresses,
+				:getAddressbook, :activateEmails, :createCampaign,
+				:delEmail, :getUserBalance, :getCampaignStats, :getTemplates
 		].each do |method|
 			define_method(method) do |params|
-				params['action'] = method.to_s	
+				params['action'] = method.to_s
 				result = exec_command(params)
 				STDERR.puts result.body
 				result = JSON.parse(result.body)
-				
-				if result.has_key? 'error'							
+
+				if result.include? 'error'
 					false
-				else					
-					result['result'] || result
+				else
+					result.include?('result') ? result['result'] : result
 				end
 			end
 		end
