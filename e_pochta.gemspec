@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'e_pochta'
   s.version     = '0.6.1'
-  s.date        = '2013-06-01'
+  s.date        = '2015-02-16'
   s.summary     = "Ruby gem for EPochta API 3.0"
   s.description = "Ruby gem for EPochta API 3.0 - an email and sms service www.epochta.ru"
   s.authors     = ["Tim Tikijian"]
